@@ -1,0 +1,70 @@
+## 1. Visão Geral
+Este documento apresenta as otimizações realizadas no servidor WildFly, focadas em melhoria de desempenho, 
+estabilidade e segurança. As alterações foram aplicadas no standalone.conf e standalone.xml, garantindo melhor 
+uso de recursos para uma aplicação de alto desempenho.
+
+---
+
+## 2. Atualizações Realizadas
+
+### 2.1 Ajuste da Memória da JVM
+- Antes: Configuração padrão sem otimização de Heap.
+- Depois:
+  -Xms8192m -Xmx12288m
+  - Ajuste do Heap para iniciar com 8GB e crescer até 12GB.
+  - Evita lentidão causada por falta de memória ou redimensionamento dinâmico.
+
+### 2.2 Otimização do Metaspace
+- Antes: Sem limite adequado.
+- Depois:
+  -XX:MetaspaceSize=512m -XX:MaxMetaspaceSize=2048m
+  - Define um limite para armazenamento de classes dinâmicas, evitando vazamentos de memória.
+
+### 2.3 Uso do Garbage Collector G1GC
+- Antes: Nenhuma otimização específica de coleta de lixo.
+- Depois:
+  -XX:+UseG1GC -XX:InitiatingHeapOccupancyPercent=45 -XX:G1ReservePercent=20
+  - Reduz pausas da JVM e melhora a estabilidade do sistema.
+
+### 2.4 Melhorias na Rede e Conexões
+- Configuração para otimizar seletores de I/O e melhorar latência:
+  -Dxnio.nio.selector.main=sun.nio.ch.PollSelectorProvider
+  - Aprimora o manuseio de requisições simultâneas.
+
+### 2.5 Ajustes para Banco de Dados
+- Configuração do pool de conexões para alto desempenho:
+  <pool>
+      <min-pool-size>50</min-pool-size>
+      <max-pool-size>300</max-pool-size>
+  </pool>
+  - Evita gargalos em acessos simultâneos ao banco de dados.
+
+### 2.6 Configuração de Logs e Depuração
+- Ativa logs de Garbage Collection para monitoramento:
+  -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:/var/log/wildfly/gc.log
+  - Permite diagnóstico mais eficiente de consumo de memória.
+
+### 2.7 Correção de Depreciação no standalone.xml
+- Erro detectado:
+  WFLYCTL0028: Attribute 'security-realm' in the resource at address '/core-service=management/management-interface=http-interface' is deprecated.
+- Correção aplicada:
+  <http-interface http-upgrade-enabled="true">
+  - Garante compatibilidade com versões futuras do WildFly.
+
+---
+
+## 3. Benefícios das Otimizações
+✅ Melhoria no desempenho e na gestão de memória.  
+✅ Aprimoramento do tempo de resposta da aplicação.  
+✅ Maior estabilidade para operação com conexões simultâneas.  
+✅ Correção de logs e erros de depreciação.  
+✅ Melhor monitoramento de recursos e otimização do Garbage Collector.  
+
+---
+
+## 4. Conclusão
+As otimizações realizadas garantem uma melhor performance e estabilidade do WildFly, tornando o ambiente mais robusto para operação com alto volume de transações e acessos simultâneos.
+
+Caso sejam necessárias futuras melhorias ou ajustes, recomenda-se o monitoramento contínuo dos logs de GC e do pool de conexões do banco de dados.
+
+---

@@ -1,0 +1,65 @@
+-- se erro de metedados execute 
+exec dbms_metadata_util.load_stylesheets; 
+
+-- criar trigger para correção de dados 
+CREATE OR REPLACE TRIGGER set_nls_date_format
+AFTER LOGON ON DATABASE
+BEGIN
+  EXECUTE IMMEDIATE 'ALTER SESSION SET NLS_DATE_FORMAT = ''DD/MM/YYYY''';
+END;
+/
+
+-- importação completa 
+impdp system/tecsis \
+  DIRECTORY=DATA_PUMP_DIR \
+  DUMPFILE=SANKHYA_LOGISTICA.dmp\
+  LOGFILE=SANKHYA_LOGISTICA_COMPLETO.log \
+  SCHEMAS=SANKHYA
+
+
+-- importação sem dados 
+impdp system/tecsis \
+  DIRECTORY=DATA_PUMP_DIR \
+  DUMPFILE=SANKHYA_REZENDE.dmp \
+  LOGFILE=SANKHYA_import_estrutura.log \
+  REMAP_SCHEMA=SANKHYA:SANKHYA \
+  CONTENT=METADATA_ONLY \
+  EXCLUDE=STATISTICS \
+  TABLE_EXISTS_ACTION=SKIP \
+  STATUS=5
+
+-- ajustar  sem dados  somente tabelas expecificas 
+impdp system/tecsis \
+DIRECTORY=DATA_PUMP_DIR \
+DUMPFILE=SANKHYA_REZENDE.dmp \
+LOGFILE=SANKHYA_import_estrutura_tabelas.log \
+REMAP_SCHEMA=SANKHYA:SANKHYA \
+TABLES=SANKHYA.TFPEMP,SANKHYA.TFPEVE,SANKHYA.TSIEMP \
+CONTENT=METADATA_ONLY \
+TABLE_EXISTS_ACTION=REPLACE \
+EXCLUDE=STATISTICS \
+STATUS=5
+
+
+-- importar apenas dados 
+impdp system/tecsis \
+  DIRECTORY=DATA_PUMP_DIR \
+  DUMPFILE=SANKHYA_REZENDE.dmp \
+  LOGFILE=SANKHYA_import_dados.log \
+  REMAP_SCHEMA=SANKHYA:SANKHYA \
+  CONTENT=DATA_ONLY \
+  TABLE_EXISTS_ACTION=APPEND \
+  EXCLUDE=STATISTICS \
+  STATUS=5
+
+-- replace de dados caso ja importado
+impdp system/tecsis \
+  DIRECTORY=DATA_PUMP_DIR \
+  DUMPFILE=SANKHYA_REZENDE.dmp \
+  LOGFILE=SANKHYA_import_dados_replace.log \
+  REMAP_SCHEMA=SANKHYA:SANKHYA \
+  CONTENT=DATA_ONLY \
+  TABLE_EXISTS_ACTION=TRUNCATE \
+  EXCLUDE=STATISTICS \
+  STATUS=5
+

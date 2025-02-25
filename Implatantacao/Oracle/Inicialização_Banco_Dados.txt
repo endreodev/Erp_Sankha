@@ -1,0 +1,111 @@
+📌 1. Criar um Script de Inicialização no systemd
+O CentOS 8 usa o systemd, então precisamos criar um serviço para iniciar o Oracle Database automaticamente.
+
+1️⃣ Crie o arquivo do serviço do Oracle no systemd:
+
+sh
+sudo nano /etc/systemd/system/oracle.service
+
+2️⃣ Adicione o seguinte conteúdo ao arquivo (ajustando o usuário oracle e caminhos conforme necessário):
+ini
+[Unit]
+Description=Oracle Database 19c Startup
+After=network.target
+
+[Service]
+User=oracle
+Group=oinstall
+Type=forking
+ExecStart=/home/oracle/scripts/startup.sh
+ExecStop=/home/oracle/scripts/shutdown.sh
+Restart=always
+TimeoutSec=300
+
+[Install]
+WantedBy=multi-user.target
+
+3️⃣ Salve e saia (Ctrl + X, Y e Enter).
+
+📌 2. Criar Scripts de Inicialização e Desligamento
+Agora, criamos os scripts que o serviço oracle.service vai chamar.
+
+1️⃣ Crie o diretório dos scripts (caso não exista):
+sh
+mkdir -p /home/oracle/scripts
+
+2️⃣ Crie o script de inicialização (startup.sh):
+sh
+sudo nano /home/oracle/scripts/startup.sh
+
+3️⃣ Adicione o seguinte conteúdo:
+sh
+#!/bin/bash
+source /home/oracle/.bash_profile
+export ORACLE_HOME=/opt/oracle/product/19c/dbhome_1
+export ORACLE_SID=orcl
+export PATH=$ORACLE_HOME/bin:$PATH
+echo "Iniciando Oracle Database..."
+lsnrctl start
+dbstart $ORACLE_HOME
+echo "Oracle Database iniciado com sucesso!"
+
+4️⃣ Crie o script de desligamento (shutdown.sh):
+sh
+sudo nano /home/oracle/scripts/shutdown.sh
+
+5️⃣ Adicione o seguinte conteúdo:
+sh
+#!/bin/bash
+source /home/oracle/.bash_profile
+export ORACLE_HOME=/opt/oracle/product/19c/dbhome_1
+export ORACLE_SID=orcl
+export PATH=$ORACLE_HOME/bin:$PATH
+echo "Parando Oracle Database..."
+dbshut $ORACLE_HOME
+lsnrctl stop
+echo "Oracle Database desligado com sucesso!"
+
+6️⃣ Dê permissão de execução aos scripts:
+sh
+sudo chmod +x /home/oracle/scripts/startup.sh
+sudo chmod +x /home/oracle/scripts/shutdown.sh
+📌 3. Configurar o Serviço para Iniciar Automaticamente
+
+1️⃣ Recarregar os serviços do systemd:
+
+sh
+sudo systemctl daemon-reload
+
+2️⃣ Habilitar o serviço do Oracle para iniciar automaticamente:
+sh
+sudo systemctl enable oracle.service
+
+3️⃣ Iniciar o serviço manualmente para testar:
+sh
+sudo systemctl start oracle.service
+
+4️⃣ Verificar se o Oracle iniciou corretamente:
+sh
+sudo systemctl status oracle.service
+Se estiver tudo certo, a saída será algo como:
+
+yaml
+● oracle.service - Oracle Database 19c Startup
+   Loaded: loaded (/etc/systemd/system/oracle.service; enabled)
+   Active: active (running) since Sat 2025-02-22 18:00:00 UTC
+
+5️⃣ Reiniciar o sistema para testar a inicialização automática:
+sh
+sudo reboot
+Após a reinicialização, verifique se o Oracle subiu automaticamente:
+
+sh
+ps -ef | grep pmon
+Se o Oracle estiver rodando, verá algo como:
+
+yaml
+oracle    1234  1  0 18:00 ?  00:00:00 ora_pmon_orcl
+
+📌 Conclusão
+🚀 Agora seu Oracle Database 19c inicia automaticamente com o CentOS 8!
+Se precisar de mais ajustes, me avise! 🔥
