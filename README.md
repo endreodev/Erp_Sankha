@@ -2,7 +2,7 @@
 
 ERP Sankha é um sistema de gestão empresarial open-source desenvolvido para auxiliar empresas no gerenciamento de suas operações diárias. Este projeto é flexível, personalizável e ideal para diferentes tipos de negócios.
 
-![ERP Sankha Dashboard](https://via.placeholder.com/800x400.png?text=ERP+Sankha+Dashboard)  
+![ERP Sankha Dashboard](https://www.sankhya.com.br/wp-content/uploads/2020/10/dashboard_desktop_2x.png)  
 *(Imagem ilustrativa do painel do ERP Sankha)*
 
 ---
