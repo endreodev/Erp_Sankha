@@ -1,0 +1,16 @@
+
+
+Instalar o linux CentOS 
+
+https://ftp.unicamp.br/pub/centos/7/isos/x86_64/
+
+
+com usuario root rode 
+```
+curl -o /etc/yum.repos.d/CentOS-Base.repo https://el7.repo.almalinux.org/centos/CentOS-Base.repo
+```
+
+apos rode o script 
+```
+    bach Install_Oracle_CentOs.sh
+```
