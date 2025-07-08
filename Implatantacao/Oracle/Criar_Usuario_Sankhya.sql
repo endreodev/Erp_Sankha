@@ -1,3 +1,5 @@
+-- sqlplus / as sysdba @/home/oracle/import.sql
+
 SET ECHO ON
 SET FEEDBACK ON
 SET VERIFY OFF
