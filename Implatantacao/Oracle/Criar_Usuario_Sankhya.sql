@@ -61,7 +61,7 @@ PROMPT ============================
 BEGIN
   EXECUTE IMMEDIATE q'[
     CREATE TABLESPACE SANKHYA
-    DATAFILE '/opt/oracle/oradata/ORCL/SANKHYA.DBF'
+    DATAFILE '/u01/app/oracle/oradata/ORCL/SANKHYA.DBF'
     SIZE 10G
     AUTOEXTEND ON NEXT 1G
     MAXSIZE UNLIMITED
@@ -77,7 +77,7 @@ END;
 BEGIN
   EXECUTE IMMEDIATE q'[
     CREATE TABLESPACE SANKIND
-    DATAFILE '/opt/oracle/oradata/ORCL/SANKIND.DBF'
+    DATAFILE '/u01/app/oracle/oradata/ORCL/SANKIND.DBF'
     SIZE 10G
     AUTOEXTEND ON NEXT 1G
     MAXSIZE UNLIMITED
@@ -93,7 +93,7 @@ END;
 BEGIN
   EXECUTE IMMEDIATE q'[
     CREATE TABLESPACE SANKLOB
-    DATAFILE '/opt/oracle/oradata/ORCL/SANKLOB.DBF'
+    DATAFILE '/u01/app/oracle/oradata/ORCL/SANKLOB.DBF'
     SIZE 10G
     AUTOEXTEND ON NEXT 1G
     MAXSIZE UNLIMITED
@@ -199,3 +199,4 @@ PROMPT * Verifique o arquivo create_sankhya.log     *
 PROMPT * Usuário: SANKHYA                           *
 PROMPT * Senha: tecsis                              *
 PROMPT **********************************************
+
